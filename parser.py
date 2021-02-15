@@ -1,8 +1,8 @@
 import os, pandas, csv, re
-import math
+import numpy as np
+from biothings.utils.dataload import dict_convert, dict_sweep
 
 from biothings import config
-from biothings.utils.dataload import dict_convert
 logging = config.logger
 
 def load_annotations(data_folder):
@@ -20,6 +20,8 @@ def load_annotations(data_folder):
         # for a BioThings API. We'll an helper function from BioThings SDK
         process_key = lambda k: k.replace(" ","_").lower()
         rec = dict_convert(rec,keyfn=process_key)
+        # remove NaN values, not indexable
+        rec = dict_sweep(rec,vals=[np.nan])
         results.setdefault(_id,[]).append(rec)
         
     for _id,docs in results.items():
